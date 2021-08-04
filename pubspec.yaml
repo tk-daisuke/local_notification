@@ -1,0 +1,60 @@
+name: riverpod_test_application
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.13.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+
+  #firebase
+  firebase_core: 1.3.0 #https://pub.dev/packages/firebase_core
+  cloud_firestore: 2.3.0 #https://pub.dev/packages/cloud_firestore
+  firebase_analytics: 8.1.2 #https://pub.dev/packages/firebase_analytics/example
+  # google_mobile_ads: 0.13.2 #https://pub.dev/packages/google_mobile_ads
+  #auth
+  firebase_auth: 2.0.0 #https://pub.dev/packages/firebase_auth
+  #
+  app_tracking_transparency: ^2.0.1 #https://pub.dev/packages/app_tracking_transparency/install
+  flutter_progress_hud: ^2.0.0
+  package_info_plus: ^1.0.4 #https://pub.dev/packages/package_info_plus
+  google_fonts: ^2.1.0 #https://pub.dev/packages/google_fonts/example
+  #通知
+  flutter_local_notifications: ^6.1.1 #
+  platform: ^3.0.0
+  timezone: ^0.7.0
+
+  #state
+  hooks_riverpod: ^0.14.0
+  flutter_hooks: ^0.16.0
+  freezed_annotation: ^0.14.1
+  freezed: ^0.14.1
+
+  #zenn 勉強
+  build_runner: ^2.0.3
+  json_serializable: ^4.1.0
+  shared_preferences: ^2.0.5
+  #log
+  simple_logger: ^1.8.1 #https://pub.dev/packages/simple_logger
+  flutter_native_timezone: ^2.0.0
+  url_launcher: ^6.0.9
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
+    
+  flutter_native_splash: ^1.2.0 #https://pub.dev/packages/flutter_native_splash/install
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
