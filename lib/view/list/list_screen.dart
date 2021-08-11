@@ -61,7 +61,7 @@ class ListScreen extends HookWidget {
   }
 }
 
-class _weeklyButtons extends StatelessWidget {
+class _weeklyButtons extends HookWidget {
   const _weeklyButtons({
     Key? key,
     required this.notificationService,
@@ -71,39 +71,54 @@ class _weeklyButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _dropdownSelectIndex = useProvider(hourSelectIndex);
+    final _selectHour = _dropdownSelectIndex.state + 1;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _button(
             name: '月',
             onPressed: () => notificationService.schedulenotification(
-                notificationID: 0, hour: 10, weekly: notificatinWeek.monday)),
+                notificationID: 0,
+                hour: _selectHour,
+                weekly: NotificatinWeek.monday)),
         _button(
             name: '火',
             onPressed: () => notificationService.schedulenotification(
-                notificationID: 1, hour: 10, weekly: notificatinWeek.thursday)),
+                notificationID: 1,
+                hour: _selectHour,
+                weekly: NotificatinWeek.tuesday)),
         _button(
             name: '水',
             onPressed: () => notificationService.schedulenotification(
                 notificationID: 2,
-                hour: 10,
-                weekly: notificatinWeek.wednesday)),
+                hour: _selectHour,
+                weekly: NotificatinWeek.wednesday)),
         _button(
             name: '木',
             onPressed: () => notificationService.schedulenotification(
-                notificationID: 3, hour: 10, weekly: notificatinWeek.saturday)),
+                notificationID: 3,
+                hour: _selectHour,
+                weekly: NotificatinWeek.thursday)),
         _button(
             name: '金',
             onPressed: () => notificationService.schedulenotification(
-                notificationID: 4, hour: 10, weekly: notificatinWeek.friday)),
+                notificationID: 4,
+                hour: _selectHour,
+                weekly: NotificatinWeek.friday)),
         _button(
             name: '土',
             onPressed: () => notificationService.schedulenotification(
-                notificationID: 5, hour: 10, weekly: notificatinWeek.saturday)),
+                notificationID: 5,
+                hour: _selectHour,
+                weekly: NotificatinWeek.saturday)),
         _button(
             name: '日',
             onPressed: () => notificationService.schedulenotification(
-                notificationID: 6, hour: 10, weekly: notificatinWeek.monday)),
+                notificationID: 6,
+                hour: _selectHour,
+                weekly: NotificatinWeek.sunday)),
       ],
     );
   }
