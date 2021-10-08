@@ -1,17 +1,62 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test_application/constants.dart';
-import 'package:riverpod_test_application/service/auth_service.dart';
+import 'package:riverpod_test_application/service/notification_service.dart';
 import 'package:riverpod_test_application/view/home/home_model.dart';
 
-class HomeScreen extends HookWidget {
+class HomeScreen extends StatefulHookWidget {
   const HomeScreen({Key? key}) : super(key: key);
   static const String id = 'home_screen';
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+    void initState() {
+    final _notificationsPlugin = FlutterLocalNotificationsPlugin();
+    const _androidSettings = AndroidInitializationSettings('ic_notice');
+    //  iOSフォアグラウンド通知を有効にするにはalertをtrueにする
+    const _iOSSettings = IOSInitializationSettings();
+    const _notificationInitSetting =
+        InitializationSettings(android: _androidSettings, iOS: _iOSSettings);
+    final _model = HomeModel();
+    // final init =
+    _notificationsPlugin.initialize(_notificationInitSetting,
+        onSelectNotification: (String? payload) async {
+      if (payload != null) {
+          //ネスト防止
+          // Navigator.pushAndRemoveUntil(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) =>
+          //           NotificationResultScreen(payload: payload)),
+          //   ModalRoute.withName(HomeScreen.id),
+          // );
+
+          context.refresh(providerGetNotificationList);
+        }
+      
+    });
+    _notificationsPlugin.getNotificationAppLaunchDetails().then((value) async {
+      if ( value!.payload != null) {
+        // print('value${value.payload}');
+        // await Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) =>
+        //           NotificationResultScreen(payload: value.payload!)),
+        // );
+        context.refresh(providerGetNotificationList);
+      }
+    });
+
+    super.initState();
+  }@override
   Widget build(BuildContext context) {
     final _index = useProvider(bottomIndex);
     final _model = useProvider(homeProvider.notifier);
@@ -55,8 +100,8 @@ class HomeScreen extends HookWidget {
       actions: [
         IconButton(
           onPressed: () {
-            final _auth = AuthService(FirebaseAuth.instance);
-            _auth.deleteUser(_auth.firebaseUser);
+            // final _auth = AuthService(FirebaseAuth.instance);
+            // _auth.deleteUser(_auth.firebaseUser);
           },
           icon: const Icon(Icons.attribution_rounded),
         ),
