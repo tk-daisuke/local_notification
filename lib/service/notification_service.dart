@@ -1,36 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_test_application/item/notification_value.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-enum notificatinWeek {
-  monday,
-  tuesday,
-  wednesday,
-  thursday,
-  friday,
-  saturday,
-  sunday,
-}
-const List<int> dateTimeWeeklist = [
-  DateTime.monday,
-  DateTime.tuesday,
-  DateTime.wednesday,
-  DateTime.thursday,
-  DateTime.friday,
-  DateTime.saturday,
-  DateTime.sunday,
-];
-const List<String> japaneseWeeklist = [
-  '月曜日',
-  '火曜日',
-  '水曜日',
-  '木曜日',
-  '金曜日',
-  '土曜日',
-  '日曜日',
-];
+final providerGetNotificationList =
+    FutureProvider<List<PendingNotificationRequest>>((ref) async {
+  final notificaitons = ref.read(notificaitonItems);
+  final getNotificationList =
+      await FlutterLocalNotificationsPlugin().pendingNotificationRequests();
+  notificaitons.state = getNotificationList;
+  return getNotificationList;
+});
+
+final notificaitonItems = StateProvider<List<PendingNotificationRequest>>(
+  (ref) => [],
+);
+
 // init
 final providerNotificationInitialization = FutureProvider<bool?>((ref) async {
   final _notificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -48,75 +37,66 @@ class NotificationService extends ChangeNotifier {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> showInstantNotification() async {
+  Future<void> schedulenotification({required NotificationValue value}) async {
     const ios = IOSNotificationDetails();
     const android = AndroidNotificationDetails('id', 'channel', 'description');
-    const notificationSetting = NotificationDetails(android: android, iOS: ios);
-    await _notificationsPlugin.show(0, 'タイトル', 'あ', notificationSetting,
-        payload: 'InstantNotification');
-  }
-
-  Future<void> show5SecondsNotification() async {
-    final interval =
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
-    const ios = IOSNotificationDetails();
-    const android = AndroidNotificationDetails('id', 'channel', 'description');
-
-    await _notificationsPlugin.zonedSchedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        interval,
-        const NotificationDetails(iOS: ios, android: android),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
-  }
-
-  Future<void> schedulenotification(
-      {required int notificationID,
-      required int hour,
-      required notificatinWeek weekly}) async {
-    const ios = IOSNotificationDetails();
-    const android = AndroidNotificationDetails('id', 'channel', 'description');
-
-    final interval = _nextInstanceOfWeekly(
-      hour: hour,
-      weekly: notificatinWeek.monday,
+    final interval = nextInstanceOfWeekly(
+      hour: value.hour,
+      weekly: value.weekID,
+      timeZone: tz.TZDateTime.now(tz.local),
+      minute: value.minutes,
     );
+    final payload = value.toJson();
     await _notificationsPlugin.zonedSchedule(
-        notificationID,
-        '${japaneseWeeklist[weekly.index]} $hour時の通知です',
-        'scheduled body',
-        interval,
-        const NotificationDetails(iOS: ios, android: android),
-        //Androidでは、androidAllowWhileIdleデバイスが低電力アイドルモードの場合でも、
-        // 指定された時間に通知を配信するかどうかを決定するために使用されます。
-        androidAllowWhileIdle: true,
-        //iLocalNotificationDateInterpretation
-        //タイムゾーンのサポートが限定されているとして10歳以上のiOSバージョンでとして必要とされます。
-        //つまり、別のタイムゾーンの通知をスケジュールして、夏時間が発生したときに通知が表示される時間をiOSに調整させることはできません。
-        //このパラメーターを使用して、スケジュールされた日付を絶対時間と実時間のどちらとして解釈するかを決定するために使用されます。
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+      value.notificationID, value.title,
+      value.comment,
+      interval, const NotificationDetails(iOS: ios, android: android),
+      payload: jsonEncode(payload),
+      //Androidでは、androidAllowWhileIdleデバイスが低電力アイドルモードの場合でも、
+      // 指定された時間に通知を配信するかどうかを決定するために使用されます。
+      androidAllowWhileIdle: true,
+// iOS8.0以降。10より古いバージョンのiOSでは、プラグインはUILocalNotificationAPIを使用します。
+// UserNotification APIは（ユーザー通知フレームワーク別名）のiOS 10以降で使用されています。
+// 10より古いバージョンのiOSで使用される通知API（別名UILocalNotificationAPI）は、
+// スケジュールされた通知と夏時間 タイムゾーンでのサポートが制限されています。
+
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+
+// matchDateTimeComponentsプラグインに時刻または曜日と時刻の組み合わせにそれぞれ一致するように指示することにより、
+// 通知が毎日または毎週表示されるようにスケジュールするために使用できるオプションのパラメーターがあります。
+      matchDateTimeComponents:
+          value.loopFlag ? DateTimeComponents.dayOfWeekAndTime : null,
+    );
   }
 
-  tz.TZDateTime _nextInstance({required int hour}) {
-    final now = tz.TZDateTime.now(tz.local);
+  tz.TZDateTime nextInstanceOfWeekly(
+      {required int weekly,
+      required int hour,
+      required int minute,
+      required tz.TZDateTime timeZone}) {
     var scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour);
-    if (scheduledDate.isBefore(now)) {
+        _nextInstance(hour: hour, timeZone: timeZone, minute: minute);
+    while (scheduledDate.weekday != weekly) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
+    // print('_nextInstanceOfWeekly scheduledDate$scheduledDate');
+
     return scheduledDate;
   }
 
-  tz.TZDateTime _nextInstanceOfWeekly(
-      {required notificatinWeek weekly, required int hour}) {
-    var scheduledDate = _nextInstance(hour: hour);
-    while (scheduledDate.weekday != dateTimeWeeklist[weekly.index]) {
+  tz.TZDateTime _nextInstance(
+      {required int hour,
+      required int minute,
+      required tz.TZDateTime timeZone}) {
+    final now = tz.TZDateTime.now(timeZone.location);
+
+    var scheduledDate = tz.TZDateTime(
+        timeZone.location, now.year, now.month, now.day, hour, minute);
+    if (scheduledDate.isBefore(timeZone)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
+    // print('_nextInstance scheduledDate$scheduledDate');
     return scheduledDate;
   }
 
@@ -129,91 +109,3 @@ class NotificationService extends ChangeNotifier {
   Future<void> cancelAllNotifications() async =>
       _notificationsPlugin.cancelAll();
 }
-
-// tz.TZDateTime _nextInstanceOfTenAMLastYear() {
-//   final now = tz.TZDateTime.now(tz.local);
-//   return tz.TZDateTime(tz.local, now.year - 1, now.month, now.day, 10);
-// }
-
-// tz.TZDateTime _nextInstanceOfMondayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.monday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-
-// tz.TZDateTime _nextInstanceOfTuesdayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.tuesday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-
-// tz.TZDateTime _nextInstanceOfWednesdayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.wednesday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-
-// tz.TZDateTime _nextInstanceOfThursdayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.thursday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-
-// tz.TZDateTime _nextInstanceOfFridayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.friday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-
-// tz.TZDateTime _nextInstanceOfSaturdayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.friday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-
-// tz.TZDateTime _nextInstanceOfSundayTenAM() {
-//   var scheduledDate = _nextInstanceOfTenAM();
-//   while (scheduledDate.weekday != DateTime.sunday) {
-//     scheduledDate = scheduledDate.add(const Duration(days: 1));
-//   }
-//   return scheduledDate;
-// }
-// Future<void> initialize() async {
-//   const _androidSettings = AndroidInitializationSettings('ic_launcher');
-//   const _iOSSettings = IOSInitializationSettings();
-//   const _notificationInitSetting =
-//       InitializationSettings(android: _androidSettings, iOS: _iOSSettings);
-//   await _notificationsPlugin.initialize(_notificationInitSetting);
-// }
-
-//   //Image notification
-// Future<void> showBigPictureNotification() async {
-//   const notificationImage = BigPictureStyleInformation(
-//       DrawableResourceAndroidBitmap('ic_launcher'),
-//       largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-//       contentTitle: 'image',
-//       summaryText: 'wawa',
-//       htmlFormatContent: true,
-//       htmlFormatContentTitle: true);
-
-//   const android = AndroidNotificationDetails('id', 'channel', 'description',
-//       styleInformation: notificationImage);
-
-//   const notificationSetting = NotificationDetails(android: android);
-
-//   await _notificationsPlugin.show(
-//       0, 'Demo Image notification', 'T', notificationSetting,
-//       payload: 'Welcome to demo app');
-// }

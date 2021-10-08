@@ -14,32 +14,36 @@ class SubscribeScreen extends HookWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Center(
-          child: FutureBuilder(
-            future: notificationService.getNotificationList(),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<PendingNotificationRequest>> snapshot) {
-              if (snapshot.hasData) {
-                final list = snapshot.data;
-                final item = list!.map((doc) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('${doc.id}'),
-                      Text('${doc.title}'),
-                      Text('${doc.payload}'),
-                      Text('${doc.body}'),
-                    ],
-                  );
-                }).toList();
-                return Column(
-                  children: item,
+        useProvider(providerGetNotificationList).when(
+            loading: () => const SizedBox(
+                  height: 4000,
+                ),
+            error: (e, stack) => Text(e.toString()),
+            data: (snapshot) => Text('data')),
+        FutureBuilder(
+          future: notificationService.getNotificationList(),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<PendingNotificationRequest>> snapshot) {
+            if (snapshot.hasData) {
+              final list = snapshot.data;
+              final item = list!.map((doc) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('${doc.id}'),
+                    Text('${doc.title}'),
+                    Text('${doc.payload}'),
+                    Text('${doc.body}'),
+                  ],
                 );
-              } else {
-                return const Text('データが存在しません');
-              }
-            },
-          ),
+              }).toList();
+              return Column(
+                children: item,
+              );
+            } else {
+              return const Text('データが存在しません');
+            }
+          },
         ),
         Container(
           child: const Center(child: const Text('subscribe')),
