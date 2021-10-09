@@ -27,6 +27,7 @@ class _$NotificationValueTearOff {
       required int minutes,
       required String title,
       required String comment,
+      required String locationName,
       required bool loopFlag}) {
     return _NotificationValue(
       notificationID: notificationID,
@@ -35,6 +36,7 @@ class _$NotificationValueTearOff {
       minutes: minutes,
       title: title,
       comment: comment,
+      locationName: locationName,
       loopFlag: loopFlag,
     );
   }
@@ -55,6 +57,7 @@ mixin _$NotificationValue {
   int get minutes => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String get comment => throw _privateConstructorUsedError;
+  String get locationName => throw _privateConstructorUsedError;
   bool get loopFlag => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -75,6 +78,7 @@ abstract class $NotificationValueCopyWith<$Res> {
       int minutes,
       String title,
       String comment,
+      String locationName,
       bool loopFlag});
 }
 
@@ -95,6 +99,7 @@ class _$NotificationValueCopyWithImpl<$Res>
     Object? minutes = freezed,
     Object? title = freezed,
     Object? comment = freezed,
+    Object? locationName = freezed,
     Object? loopFlag = freezed,
   }) {
     return _then(_value.copyWith(
@@ -122,6 +127,10 @@ class _$NotificationValueCopyWithImpl<$Res>
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
               as String,
+      locationName: locationName == freezed
+          ? _value.locationName
+          : locationName // ignore: cast_nullable_to_non_nullable
+              as String,
       loopFlag: loopFlag == freezed
           ? _value.loopFlag
           : loopFlag // ignore: cast_nullable_to_non_nullable
@@ -144,6 +153,7 @@ abstract class _$NotificationValueCopyWith<$Res>
       int minutes,
       String title,
       String comment,
+      String locationName,
       bool loopFlag});
 }
 
@@ -166,6 +176,7 @@ class __$NotificationValueCopyWithImpl<$Res>
     Object? minutes = freezed,
     Object? title = freezed,
     Object? comment = freezed,
+    Object? locationName = freezed,
     Object? loopFlag = freezed,
   }) {
     return _then(_NotificationValue(
@@ -193,6 +204,10 @@ class __$NotificationValueCopyWithImpl<$Res>
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
               as String,
+      locationName: locationName == freezed
+          ? _value.locationName
+          : locationName // ignore: cast_nullable_to_non_nullable
+              as String,
       loopFlag: loopFlag == freezed
           ? _value.loopFlag
           : loopFlag // ignore: cast_nullable_to_non_nullable
@@ -212,6 +227,7 @@ class _$_NotificationValue extends _NotificationValue
       required this.minutes,
       required this.title,
       required this.comment,
+      required this.locationName,
       required this.loopFlag})
       : super._();
 
@@ -231,11 +247,13 @@ class _$_NotificationValue extends _NotificationValue
   @override
   final String comment;
   @override
+  final String locationName;
+  @override
   final bool loopFlag;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationValue(notificationID: $notificationID, weekID: $weekID, hour: $hour, minutes: $minutes, title: $title, comment: $comment, loopFlag: $loopFlag)';
+    return 'NotificationValue(notificationID: $notificationID, weekID: $weekID, hour: $hour, minutes: $minutes, title: $title, comment: $comment, locationName: $locationName, loopFlag: $loopFlag)';
   }
 
   @override
@@ -249,6 +267,7 @@ class _$_NotificationValue extends _NotificationValue
       ..add(DiagnosticsProperty('minutes', minutes))
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('comment', comment))
+      ..add(DiagnosticsProperty('locationName', locationName))
       ..add(DiagnosticsProperty('loopFlag', loopFlag));
   }
 
@@ -271,6 +290,9 @@ class _$_NotificationValue extends _NotificationValue
             (identical(other.comment, comment) ||
                 const DeepCollectionEquality()
                     .equals(other.comment, comment)) &&
+            (identical(other.locationName, locationName) ||
+                const DeepCollectionEquality()
+                    .equals(other.locationName, locationName)) &&
             (identical(other.loopFlag, loopFlag) ||
                 const DeepCollectionEquality()
                     .equals(other.loopFlag, loopFlag)));
@@ -285,6 +307,7 @@ class _$_NotificationValue extends _NotificationValue
       const DeepCollectionEquality().hash(minutes) ^
       const DeepCollectionEquality().hash(title) ^
       const DeepCollectionEquality().hash(comment) ^
+      const DeepCollectionEquality().hash(locationName) ^
       const DeepCollectionEquality().hash(loopFlag);
 
   @JsonKey(ignore: true)
@@ -306,6 +329,7 @@ abstract class _NotificationValue extends NotificationValue {
       required int minutes,
       required String title,
       required String comment,
+      required String locationName,
       required bool loopFlag}) = _$_NotificationValue;
   const _NotificationValue._() : super._();
 
@@ -324,6 +348,8 @@ abstract class _NotificationValue extends NotificationValue {
   String get title => throw _privateConstructorUsedError;
   @override
   String get comment => throw _privateConstructorUsedError;
+  @override
+  String get locationName => throw _privateConstructorUsedError;
   @override
   bool get loopFlag => throw _privateConstructorUsedError;
   @override

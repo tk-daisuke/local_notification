@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test_application/constants.dart';
 import 'package:riverpod_test_application/service/notification_service.dart';
 import 'package:riverpod_test_application/view/home/home_model.dart';
+import 'package:riverpod_test_application/view/notification_result/notification_result_screen.dart';
 
 class HomeScreen extends StatefulHookWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,46 +18,46 @@ class HomeScreen extends StatefulHookWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-    void initState() {
+  void initState() {
     final _notificationsPlugin = FlutterLocalNotificationsPlugin();
     const _androidSettings = AndroidInitializationSettings('ic_notice');
     //  iOSフォアグラウンド通知を有効にするにはalertをtrueにする
     const _iOSSettings = IOSInitializationSettings();
     const _notificationInitSetting =
         InitializationSettings(android: _androidSettings, iOS: _iOSSettings);
-    final _model = HomeModel();
+    // final _model = HomeModel();
     // final init =
     _notificationsPlugin.initialize(_notificationInitSetting,
         onSelectNotification: (String? payload) async {
       if (payload != null) {
-          //ネスト防止
-          // Navigator.pushAndRemoveUntil(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) =>
-          //           NotificationResultScreen(payload: payload)),
-          //   ModalRoute.withName(HomeScreen.id),
-          // );
+        // ネスト防止
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => NotificationResultScreen(payload: payload)),
+          ModalRoute.withName(HomeScreen.id),
+        );
 
-          context.refresh(providerGetNotificationList);
-        }
-      
+        context.refresh(providerGetNotificationList);
+      }
     });
     _notificationsPlugin.getNotificationAppLaunchDetails().then((value) async {
-      if ( value!.payload != null) {
-        // print('value${value.payload}');
-        // await Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) =>
-        //           NotificationResultScreen(payload: value.payload!)),
-        // );
+      if (value!.payload != null) {
+        print('value${value.payload}');
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  NotificationResultScreen(payload: value.payload!)),
+        );
         context.refresh(providerGetNotificationList);
       }
     });
 
     super.initState();
-  }@override
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _index = useProvider(bottomIndex);
     final _model = useProvider(homeProvider.notifier);
@@ -73,7 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
       unselectedItemColor: kUnselectedBottomItemColor,
       items: _bottomButton,
       currentIndex: _index.state,
-      onTap: (selectIndex) => _index.state = selectIndex,
+      onTap: (selectIndex) {
+        if (selectIndex != _index.state) {
+          context.refresh(providerGetNotificationList);
+        }
+        _index.state = selectIndex;
+      },
     );
   }
 
@@ -87,25 +93,16 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: Icon(Icons.list),
         label: kBottom2,
       ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.settings),
-        label: kBottom3,
-      ),
+      // BottomNavigationBarItem(
+      //   icon: Icon(Icons.settings),
+      //   label: kBottom3,
+      // ),
     ];
   }
 
   AppBar _appBar() {
     return AppBar(
       title: Text(kAppName, style: GoogleFonts.poppins()),
-      actions: [
-        IconButton(
-          onPressed: () {
-            // final _auth = AuthService(FirebaseAuth.instance);
-            // _auth.deleteUser(_auth.firebaseUser);
-          },
-          icon: const Icon(Icons.attribution_rounded),
-        ),
-      ],
     );
   }
 }

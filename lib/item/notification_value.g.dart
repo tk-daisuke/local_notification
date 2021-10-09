@@ -14,6 +14,7 @@ _$_NotificationValue _$_$_NotificationValueFromJson(Map<String, dynamic> json) {
     minutes: json['minutes'] as int,
     title: json['title'] as String,
     comment: json['comment'] as String,
+    locationName: json['locationName'] as String,
     loopFlag: json['loopFlag'] as bool,
   );
 }
@@ -27,5 +28,6 @@ Map<String, dynamic> _$_$_NotificationValueToJson(
       'minutes': instance.minutes,
       'title': instance.title,
       'comment': instance.comment,
+      'locationName': instance.locationName,
       'loopFlag': instance.loopFlag,
     };

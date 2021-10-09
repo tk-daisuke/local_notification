@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_test_application/item/notification_setting.dart';
 import 'package:riverpod_test_application/item/notification_value.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/timezone.dart';
 
 final providerGetNotificationList =
     FutureProvider<List<PendingNotificationRequest>>((ref) async {
@@ -19,8 +19,14 @@ final providerGetNotificationList =
 final notificaitonItems = StateProvider<List<PendingNotificationRequest>>(
   (ref) => [],
 );
+final notificationSettingProvider = StateProvider<NotificationSetting>((ref) =>
+    const NotificationSetting(
+        hour: 12,
+        minute: 0,
+        loopFlag: true,
+        comment: '',
+        weekID: DateTime.monday));
 
-// init
 final providerNotificationInitialization = FutureProvider<bool?>((ref) async {
   final _notificationsPlugin = FlutterLocalNotificationsPlugin();
   const _androidSettings = AndroidInitializationSettings('ic_launcher');
@@ -30,10 +36,8 @@ final providerNotificationInitialization = FutureProvider<bool?>((ref) async {
   final init = await _notificationsPlugin.initialize(_notificationInitSetting);
   return init;
 });
-final notificationProvider =
-    ChangeNotifierProvider((ref) => NotificationService());
 
-class NotificationService extends ChangeNotifier {
+class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -46,7 +50,7 @@ class NotificationService extends ChangeNotifier {
       timeZone: tz.TZDateTime.now(tz.local),
       minute: value.minutes,
     );
-    final payload = value.toJson();
+    final payload = {'detail': value.toJson()};
     await _notificationsPlugin.zonedSchedule(
       value.notificationID, value.title,
       value.comment,
@@ -74,7 +78,7 @@ class NotificationService extends ChangeNotifier {
       {required int weekly,
       required int hour,
       required int minute,
-      required tz.TZDateTime timeZone}) {
+      required TZDateTime timeZone}) {
     var scheduledDate =
         _nextInstance(hour: hour, timeZone: timeZone, minute: minute);
     while (scheduledDate.weekday != weekly) {

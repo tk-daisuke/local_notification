@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test_application/service/initialize.dart';
 import 'package:riverpod_test_application/view/home/home_screen.dart';
-import 'package:riverpod_test_application/view/list/list_screen.dart';
+import 'package:riverpod_test_application/view/list/notification_add_screen.dart';
+import 'package:riverpod_test_application/view/notification_result/notification_result_screen.dart';
 import 'package:riverpod_test_application/view/setting/setting_screen.dart';
 import 'package:riverpod_test_application/view/subscribe/subscribe_sceen.dart';
 
@@ -22,11 +23,13 @@ Future<void> main() async {
   ]);
 
   runApp(
-    ProviderScope(child: MyApp()),
+    const ProviderScope(child: MyApp()),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -51,7 +54,7 @@ class MyApp extends StatelessWidget {
         // WelcomeScreen.id: (context) => const WelcomeScreen(),
         SettingScreen.id: (context) => const SettingScreen(),
         SubscribeScreen.id: (context) => const SubscribeScreen(),
-        ListScreen.id: (context) => const ListScreen(),
+        NotificationAddScreen.id: (context) => const NotificationAddScreen(),
       },
     );
   }

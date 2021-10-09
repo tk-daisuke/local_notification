@@ -16,6 +16,7 @@ class NotificationValue with _$NotificationValue {
       required int minutes,
       required String title,
       required String comment,
+      required String locationName,
       required bool loopFlag}) = _NotificationValue;
 
   factory NotificationValue.fromJson(Map<String, dynamic> json) =>
