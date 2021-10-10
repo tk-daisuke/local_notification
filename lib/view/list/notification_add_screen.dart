@@ -33,11 +33,14 @@ class NotificationAddScreen extends HookWidget {
             const NotificationTimeEditor(),
             HookBuilder(builder: (context) {
               final _settings = useProvider(notificationSettingProvider);
+              final list = useProvider(notificaitonItems);
 
               return ElevatedButton(
                   onPressed: () async {
+                    context.refresh(providerGetNotificationList);
+
                     await _model.addNotification(
-                      list.state.length + 1,
+                      list,
                       _settings,
                     );
                     context.refresh(providerGetNotificationList);

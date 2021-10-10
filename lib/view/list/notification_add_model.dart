@@ -14,15 +14,28 @@ class NotificationAddModel {
       notificationService.cancelAllNotifications();
 
   Future<void> addNotification(
-    int listLength,
+    StateController<List<PendingNotificationRequest>> list,
     StateController<NotificationSetting> settings,
   ) async {
+    final listState = list.state.map((e) => e.id).toList();
+    var notificationID = 0;
+    print(listState);
+
+    for (var i = 0; i < listState.length + 1; i++) {
+      if (!listState.contains(i)) {
+        notificationID = i;
+      }
+    }
+
+    // print(list.state.length);
+    print(notificationID);
+
     final value = NotificationValue(
-        notificationID: listLength,
+        notificationID: notificationID,
         weekID: settings.state.weekID,
         hour: settings.state.hour,
         minutes: settings.state.minute,
-        title: '$listLength番目',
+        title: notificationID.toString(),
         comment: settings.state.comment,
         loopFlag: settings.state.loopFlag,
         locationName: tz.local.name);

@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
         InitializationSettings(android: _androidSettings, iOS: _iOSSettings);
     // final _model = HomeModel();
     // final init =
+
     _notificationsPlugin.initialize(_notificationInitSetting,
         onSelectNotification: (String? payload) async {
       if (payload != null) {
