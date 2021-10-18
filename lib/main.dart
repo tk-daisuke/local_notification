@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test_application/service/initialize.dart';
 import 'package:riverpod_test_application/view/home/home_screen.dart';
 import 'package:riverpod_test_application/view/list/notification_add_screen.dart';
-import 'package:riverpod_test_application/view/notification_result/notification_result_screen.dart';
 import 'package:riverpod_test_application/view/setting/setting_screen.dart';
 import 'package:riverpod_test_application/view/subscribe/subscribe_sceen.dart';
 
