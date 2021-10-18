@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:riverpod_test_application/service/notification_service.dart';
@@ -26,7 +25,7 @@ class NotificaitonTile extends StatelessWidget {
       style: const TextStyle(
         fontWeight: FontWeight.w800,
         letterSpacing: 0.5,
-        fontSize: 25,
+        fontSize: 20,
       ),
       child: Container(
         margin: const EdgeInsets.symmetric(
@@ -34,7 +33,7 @@ class NotificaitonTile extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.red),
+          border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -45,7 +44,7 @@ class NotificaitonTile extends StatelessWidget {
                 children: [
                   Wrap(
                     children: [
-                      Text('タイトル${payload.locationName}'),
+                      Text('タイトル${payload.title}'),
                       if (payload.comment.isNotEmpty)
                         Text('コメント${payload.comment}'),
                     ],

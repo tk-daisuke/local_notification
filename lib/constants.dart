@@ -11,8 +11,8 @@ const kPrivacyPolicy = 'https://www.google.com/';
 // WelcomeScreen
 const kSignup = '登録する';
 // HomeScreen
-const kBottom1 = 'home';
-const kBottom2 = '登録';
+const kBottom1 = 'Control';
+const kBottom2 = 'Notifications';
 const kBottom3 = 'setting';
 const kSelectedBottomItemColor = Colors.lightBlue;
 const kUnselectedBottomItemColor = Colors.white;
