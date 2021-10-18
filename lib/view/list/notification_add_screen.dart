@@ -13,7 +13,7 @@ class NotificationAddScreen extends HookWidget {
   Widget build(BuildContext context) {
     final _model = NotificationAddModel();
 
-    final list = useProvider(notificaitonItems);
+    useProvider(notificaitonItems);
     return Center(
       child: SingleChildScrollView(
         child: Column(
@@ -30,7 +30,37 @@ class NotificationAddScreen extends HookWidget {
             const SizedBox(
               height: 100,
             ),
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.add),
+                Text(
+                  '通知を登録する',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ],
+            ),
+            const Divider(),
             const NotificationTimeEditor(),
+            Row(
+              children: [
+                const Text('コメント'),
+                // const Icon(Icons.comment),
+                Expanded(child: HookBuilder(builder: (context) {
+                  final _settings =
+                      useProvider(notificationSettingProvider.notifier);
+
+                  return TextFormField(
+                    onChanged: (value) {
+                      print(_settings.state);
+                      _settings.state =
+                          _settings.state.copyWith(comment: value);
+                    },
+                  );
+                })),
+              ],
+            ),
             HookBuilder(builder: (context) {
               final _settings = useProvider(notificationSettingProvider);
               final list = useProvider(notificaitonItems);
@@ -54,22 +84,3 @@ class NotificationAddScreen extends HookWidget {
     );
   }
 }
-
-// class _button extends StatelessWidget {
-//   const _button({
-//     Key? key,
-//     required this.name,
-//     required this.onPressed,
-//   }) : super(key: key);
-//   final String name;
-//   final VoidCallback onPressed;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ElevatedButton.icon(
-//       onPressed: onPressed,
-//       icon: const Icon(Icons.add),
-//       label: Text(name),
-//     );
-//   }
-
