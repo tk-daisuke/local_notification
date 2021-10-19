@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test_application/item/notification_setting.dart';
 import 'package:riverpod_test_application/service/notification_service.dart';
+import 'package:riverpod_test_application/view/widget/notification_add_tile.dart';
 
 class NotificationTimeEditor extends HookWidget {
   const NotificationTimeEditor({
@@ -42,43 +43,6 @@ class NotificationTimeEditor extends HookWidget {
             // Icon(Icons.forward_to_inbox_sharp)
           ],
         ),
-      ),
-    );
-  }
-}
-
-class NotificationAddTile extends StatelessWidget {
-  const NotificationAddTile({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.child,
-  }) : super(key: key);
-
-  final IconData icon;
-  final String title;
-  final Widget child;
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 80,
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-              width: 100,
-              child: Row(
-                children: [
-                  Icon(icon),
-                  Text(
-                    title,
-                    textScaleFactor: 1,
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                ],
-              )),
-          Expanded(child: child),
-        ],
       ),
     );
   }
