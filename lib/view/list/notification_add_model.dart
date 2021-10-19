@@ -9,6 +9,8 @@ final timezoneSelectIndex = StateProvider((ref) => 3);
 
 class NotificationAddModel {
   final notificationService = NotificationService();
+  final weekList = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日'];
+
   Future<void> cancelAllNotifications() async =>
       notificationService.cancelAllNotifications();
 
@@ -34,7 +36,7 @@ class NotificationAddModel {
         weekID: settings.state.weekID,
         hour: settings.state.hour,
         minutes: settings.state.minute,
-        title: notificationID.toString(),
+        title: '${weekList[settings.state.weekID - 1]}の通知です',
         comment: settings.state.comment,
         loopFlag: settings.state.loopFlag,
         locationName: tz.local.name);
@@ -42,5 +44,25 @@ class NotificationAddModel {
     await notificationService.schedulenotification(
       value: value,
     );
+  }
+
+  int getWeekID(String value) {
+    if (value == weekList[0]) {
+      return DateTime.monday;
+    } else if (value == weekList[1]) {
+      return DateTime.tuesday;
+    } else if (value == weekList[2]) {
+      return DateTime.wednesday;
+    } else if (value == weekList[3]) {
+      return DateTime.thursday;
+    } else if (value == weekList[4]) {
+      return DateTime.friday;
+    } else if (value == weekList[5]) {
+      return DateTime.saturday;
+    } else if (value == weekList[6]) {
+      return DateTime.sunday;
+    } else {
+      return DateTime.sunday;
+    }
   }
 }

@@ -40,6 +40,7 @@ dependencies:
   simple_logger: ^1.8.1 #https://pub.dev/packages/simple_logger
   flutter_native_timezone: ^2.0.0
   url_launcher: ^6.0.9
+  keyboard_actions: ^3.4.4
 
 dev_dependencies:
   integration_test:
