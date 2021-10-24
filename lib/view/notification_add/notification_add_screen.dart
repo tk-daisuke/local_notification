@@ -3,9 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:riverpod_test_application/service/notification_service.dart';
-import 'package:riverpod_test_application/view/list/notification_add_model.dart';
+import 'package:riverpod_test_application/view/notification_add/notification_add_model.dart';
 import 'package:riverpod_test_application/view/widget/notificaiton_time_editor.dart';
 import 'package:riverpod_test_application/view/widget/notification_add_tile.dart';
+import 'package:riverpod_test_application/view/widget/notification_count.dart';
 
 class NotificationAddScreen extends HookWidget {
   const NotificationAddScreen({Key? key}) : super(key: key);
@@ -21,6 +22,20 @@ class NotificationAddScreen extends HookWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            ElevatedButton(
+                onPressed: () {
+                  showLicensePage(
+                    context: context,
+                    applicationName: 'test',
+                    applicationVersion: '1.0.0', // バージョン
+                    applicationIcon: const Image(
+                      width: 50,
+                      image: AssetImage('assets/images/Icon.png'),
+                    ),
+                    applicationLegalese: '©2021 Daisuke Sato', // 権利情報
+                  );
+                },
+                child: const Text('Licence')),
             ElevatedButton.icon(
               onPressed: () async {
                 await _model.cancelAllNotifications();
@@ -67,6 +82,7 @@ class NotificationAddScreen extends HookWidget {
                   },
                   child: const Text('ADD NOTIFICATION'));
             }),
+            const NotificationCount(),
             const SizedBox(height: 200),
           ],
         ),
@@ -74,6 +90,8 @@ class NotificationAddScreen extends HookWidget {
     );
   }
 }
+
+
 
 class _LoopFlag extends StatelessWidget {
   const _LoopFlag({
