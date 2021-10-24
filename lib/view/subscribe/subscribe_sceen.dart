@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_test_application/service/notification_service.dart';
+import 'package:riverpod_test_application/view/widget/notification_count.dart';
 import 'package:riverpod_test_application/view/widget/notification_tile.dart';
 
 class SubscribeScreen extends HookWidget {
@@ -16,6 +17,7 @@ class SubscribeScreen extends HookWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const NotificationCount(),
               useProvider(providerGetNotificationList).when(
                   loading: () => const SizedBox(
                         height: 4000,
